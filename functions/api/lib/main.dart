@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_appwrite/dart_appwrite.dart';
@@ -7,6 +8,10 @@ import 'package:scholaris_api/new-tentant.handler.dart';
 import 'package:scholaris_api/types.dart' as types;
 
 Future<dynamic> main(final context) async {
+  dynamic body;
+  if (context.req.body != null && (context.req.body as String).isNotEmpty) {
+    body = jsonDecode(context.req.body);
+  }
   final req = types.Request(
       context.req.method,
       context.req.scheme,
@@ -16,7 +21,7 @@ Future<dynamic> main(final context) async {
       context.req.queryString,
       context.req.port,
       context.req.headers,
-      body: context.req.body,
+      body: body,
       bodyRaw: context.req.bodyRaw,
       query: context.req.query);
 
@@ -51,7 +56,6 @@ Future<dynamic> main(final context) async {
     if (ans == null) return res.empty();
     return res.json(ans);
   } on types.ExecutionException catch (err) {
-    context.error(err.message);
     return res.send('Internal Server Error', 500);
   }
 }

@@ -30,20 +30,26 @@ Future<dynamic>? createTenant(RequestContext context) async {
   }
 
   final db = Databases(context.client);
+  final teams = Teams(context.client);
+  final team = await teams.create(
+      name: name, teamId: ID.unique(), roles: tenantMembershipRoles);
+
+  final membership = await teams
+      .createMembership(teamId: team.$id, userId: user.$id, roles: ['owner']);
+
   final tenantDoc = await db.createDocument(
       databaseId: _dbId,
       collectionId: _tenantsCollectionId,
-      documentId: ID.unique(),
-      data: {name: name},
-      permissions: [Permission.read(Role.user(user.$id))]) as Tenant;
-
-  final teams = Teams(context.client);
-  final team = await teams.create(
-      name: tenantDoc.data['name'],
-      teamId: tenantDoc.$id,
-      roles: [Role.user(user.$id, 'owner')]);
-  final memberships = await teams.listMemberships(
-      teamId: team.$id, queries: [Query.equal('userId', user.$id)]);
+      documentId: team.$id,
+      data: {
+        "name": name
+      },
+      permissions: [
+        Permission.read(Role.team(team.$id)),
+        Permission.update(Role.team(team.$id, maintainerRole)),
+        Permission.update(Role.team(team.$id, adminRole)),
+        Permission.delete(Role.team(team.$id, 'owner'))
+      ]);
 
   await db.createDocument(
       databaseId: _dbId,
@@ -55,6 +61,7 @@ Future<dynamic>? createTenant(RequestContext context) async {
       },
       permissions: [
         Permission.read(Role.team(team.$id, 'owner')),
+        Permission.read(Role.team(team.$id, 'maintainer')),
         Permission.update(Role.team(team.$id, 'owner'))
       ]);
 
@@ -63,20 +70,22 @@ Future<dynamic>? createTenant(RequestContext context) async {
       .resource(tenantDoc.$id)
       .build();
 
+  final actions = [
+    PlatformAction.Update.toString().toLowerCase().split('.')[1],
+    PlatformAction.Delete.toString().toLowerCase().split('.')[1],
+    PlatformAction.Read.toString().toLowerCase().split('.')[1],
+  ];
+
   final rootPermission = {
     'name': 'Root Permission',
-    'actions': [
-      PlatformAction.Update,
-      PlatformAction.Delete,
-      PlatformAction.Read,
-    ],
-    'memberships': [memberships.memberships[0].$id],
+    'actions': actions,
+    'memberships': [membership.$id],
     'targets': ResourceType.values.map((type) {
       return ResourceStringBuilder.create(prefix)
           .type(type)
           .resource(anyResource)
           .build();
-    })
+    }).toList()
   };
 
   await db.createDocument(
@@ -85,5 +94,5 @@ Future<dynamic>? createTenant(RequestContext context) async {
       documentId: ID.unique(),
       data: rootPermission);
 
-  return tenantDoc;
+  return tenantDoc.toMap();
 }

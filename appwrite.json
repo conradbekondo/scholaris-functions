@@ -6,7 +6,9 @@
             "$id": "66c36f1f7edd3141a0d9",
             "name": "api",
             "runtime": "dart-3.1",
-            "execute": [],
+            "execute": [
+                "users"
+            ],
             "events": [],
             "schedule": "",
             "timeout": 15,

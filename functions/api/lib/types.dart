@@ -1,13 +1,17 @@
 import 'package:dart_appwrite/dart_appwrite.dart';
 import 'package:dart_appwrite/models.dart';
 
+const maintainerRole = 'maintainer';
+const adminRole = 'admin';
+const tenantMembershipRoles = [maintainerRole, adminRole];
+
 class Request {
   final String method, scheme, url, host, path, queryString;
   final Map<String, String>? query;
   final int port;
   final String? bodyRaw;
-  final Map<String, dynamic>? body;
-  final Map<String, String> headers;
+  final dynamic body;
+  final Map<String, dynamic> headers;
 
   Request(this.method, this.scheme, this.url, this.host, this.path,
       this.queryString, this.port, this.headers,
@@ -16,9 +20,10 @@ class Request {
 
 class Response {
   final void Function() empty;
-  final String Function(Object) json;
+  final dynamic Function(Map<String, dynamic>, [int, Map<String, dynamic>])
+      json;
   final dynamic Function(String, int) redirect;
-  final dynamic Function(String, int?) send;
+  final dynamic Function(String, [int, Map<String, dynamic>]) send;
 
   Response(this.empty, this.json, this.redirect, this.send);
 }
