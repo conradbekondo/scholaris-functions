@@ -5,21 +5,22 @@
         {
             "$id": "66c36f1f7edd3141a0d9",
             "name": "api",
-            "runtime": "dart-3.1",
+            "runtime": "go-1.23",
             "execute": [
-                "users"
+                "any"
             ],
             "events": [],
+            "scopes": [
+                "users.read",
+                "teams.read",
+                "teams.create"
+            ],
             "schedule": "",
             "timeout": 15,
             "enabled": true,
             "logging": true,
-            "entrypoint": "lib/main.dart",
-            "commands": "dart pub get",
-            "ignore": [
-                ".packages",
-                ".dart_tool"
-            ],
+            "entrypoint": "main.go",
+            "commands": "",
             "path": "functions/api"
         }
     ]

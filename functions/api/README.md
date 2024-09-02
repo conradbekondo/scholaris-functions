@@ -2,19 +2,19 @@
 
 ## 🧰 Usage
 
-### GET /
+### GET /ping
 
-- Returns a "Hello, World!" message.
+- Returns a "Pong" message.
 
 **Response**
 
 Sample `200` Response:
 
 ```text
-Hello, World!
+Pong
 ```
 
-### POST, PUT, PATCH, DELETE /
+### GET, POST, PUT, PATCH, DELETE /
 
 - Returns a "Learn More" JSON response.
 
@@ -33,13 +33,12 @@ Sample `200` Response:
 
 ## ⚙️ Configuration
 
-| Setting           | Value           |
-|-------------------|-----------------|
-| Runtime           | Dart (3.1)     |
-| Entrypoint        | `lib/main.dart` |
-| Build Commands    | `dart pub get`  |
-| Permissions       | `any`           |
-| Timeout (Seconds) | 15              |
+| Setting           | Value         |
+| ----------------- | ------------- |
+| Runtime           | Go (1.23)     |
+| Entrypoint        | `main.go`     |
+| Permissions       | `any`         |
+| Timeout (Seconds) | 15            |
 
 ## 🔒 Environment Variables
 
