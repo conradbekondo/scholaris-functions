@@ -13,7 +13,9 @@
             "scopes": [
                 "users.read",
                 "teams.read",
-                "teams.create"
+                "teams.write",
+                "documents.read",
+                "documents.write"
             ],
             "schedule": "",
             "timeout": 15,
